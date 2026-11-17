@@ -1,0 +1,26 @@
+{
+  "info": {
+    "name": "Knowwise AI Knowledge & Decision Assistant",
+    "description": "Registration, login, tenant dashboard, PDF upload and public assistant requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "assistantToken", "value": "" },
+    { "key": "documentId", "value": "" }
+  ],
+  "item": [
+    { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/api/health" } },
+    { "name": "Register organization", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"organizationName\": \"ABC University\",\n  \"fullName\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"StrongPass123\"\n}" }, "url": "{{baseUrl}}/api/auth/register" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data.accessToken) pm.collectionVariables.set('token', data.accessToken);", "if (data.assistantToken) pm.collectionVariables.set('assistantToken', data.assistantToken);"] } }] },
+    { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"StrongPass123\"\n}" }, "url": "{{baseUrl}}/api/auth/login" }, "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const data = pm.response.json();", "if (data.accessToken) pm.collectionVariables.set('token', data.accessToken);", "if (data.assistantToken) pm.collectionVariables.set('assistantToken', data.assistantToken);"] } }] },
+    { "name": "Current user", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/auth/me" } },
+    { "name": "List documents", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/documents" } },
+    { "name": "Upload PDF", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "body": { "mode": "formdata", "formdata": [{ "key": "file", "type": "file", "src": "" }] }, "url": "{{baseUrl}}/api/documents" } },
+    { "name": "Get assistant settings", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/organization/assistant" } },
+    { "name": "Regenerate assistant token", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/organization/assistant/regenerate" } },
+    { "name": "Usage", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/organization/usage" } },
+    { "name": "Public assistant info", "request": { "method": "GET", "url": "{{baseUrl}}/api/public/assistant/{{assistantToken}}" } },
+    { "name": "Ask assistant", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"assistantToken\": \"{{assistantToken}}\",\n  \"question\": \"What is the minimum GPA for the Merit Scholarship?\"\n}" }, "url": "{{baseUrl}}/api/public/ask" } }
+  ]
+}
